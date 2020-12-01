@@ -1,0 +1,19 @@
+{
+  "name": "cards-itsm-1",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Учебный проект 'Cards-ITSM-1'",
+  "scripts": {
+    "eslint": "eslint src/**/*.js",
+    "test": "npm run eslint",
+    "build": "webpack",
+    "start": "webpack-dev-server --open"
+  },
+  "devDependencies": {
+    "eslint": "7.14.0",
+    "webpack": "5.6.0",
+    "webpack-cli": "3.3.12",
+    "webpack-dev-server": "3.11.0"
+  },
+  "dependencies": {}
+}
