@@ -1,19 +1,42 @@
-.main__board {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+.main {
+	padding: 20px;
+	padding-top: 0;
+}
 
-    padding: 20px;
+.main__board {
+	width: 70vw;
+	height: 50vh;
+	overflow-y: auto;
+
+	border: 1px solid black;
+	padding: 20px;
+	margin-bottom: 20px;
+
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
 }
 
 .card {
-    width: 400px;
-    height: 300px; 
-    overflow-y: auto;
+	width: 400px;
+	height: 300px;
+	overflow-y: auto;
 
-    border: 1px solid black;
+	border: 1px solid black;
 
-    padding: 10px;
-    margin: 10px;
+	padding: 10px;
+	margin: 10px;
+
+	cursor: pointer;
+}
+
+.main__card-full {
+	width: 70vw;
+	min-height: 29vh;
+	overflow-y: auto;
+
+	border: 1px solid black;
+	padding: 20px;
+	margin-top: 20px;
 }
