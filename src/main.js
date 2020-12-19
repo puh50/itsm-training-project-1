@@ -19,7 +19,7 @@ const cardFavoriteBlock = cardFavoriteSection.querySelector(`.main__card-favorit
 const mainBoard = cardInfoBoardsSection.querySelector(`.main__board`);
 getDataFromServer(`https://jsonplaceholder.typicode.com/posts`, `GET`)
   .then((data) => {
-    const items = data.map((item) => {
+    data.forEach((item) => {
       render(mainBoard, createCard(item), `beforeend`);
     });
 
@@ -27,34 +27,28 @@ getDataFromServer(`https://jsonplaceholder.typicode.com/posts`, `GET`)
   })
   .then((data) => {
     const cards = siteMainSection.querySelectorAll(`.card`);
-    const stars = siteMainSection.querySelectorAll(`.favorite-star`);
 
-    for (let i = 0; i < cards.length; i++) {
-
-      cards[i].addEventListener(`click`, () => {
+    cards.forEach((card, index) => {
+      card.addEventListener(`click`, (evt) => {
 
         const activeCard = data.filter((card) => {
-          if (card.id === i + 1) {
+          if (card.id === index + 1) {
             return true;
           }
         })
+
+        if (evt.target.classList.contains(`favorite-star`)) {
+          card.classList.toggle(`favorite-card`);
+
+          card.classList.contains(`favorite-card`)
+            ? cardFavoriteBlock.appendChild(card)
+            : mainBoard.appendChild(card);
+        }
 
         clear(extandedCardBlock);
         render(extandedCardBlock, extandedCard(activeCard[0]), `beforeend`);
 
       });
-    }
-
-    stars.forEach((star) => {
-      star.addEventListener(`click`, () => {
-        const currentCard = star.parentElement;
-        currentCard.classList.toggle(`favorite-card`);
-
-        star.parentElement.classList.contains(`favorite-card`)
-          ? cardFavoriteBlock.appendChild(currentCard)
-          : mainBoard.appendChild(currentCard);
-
-      })
     })
 
   })
