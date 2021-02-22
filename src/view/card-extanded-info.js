@@ -1,8 +1,31 @@
-export const extandedCard = (card) => {
-  const {title, body, id, userId} = card;
+console.log(`extandedCard`)
 
-  return `<h1 class='card__title'>Title: ${title}</h1>
-          <p class='card__description'>Description: ${body}</p>
-          <p class='card__id'>ID: ${id}</p>
-          <p class='card__user-id'>User ID: ${userId}</p>`;
+export const extandedCard = (card) => {
+  const {title, body, favorite, id, userId, editMode} = card;
+
+  const favoriteCard = favorite
+    ? `favorite-card`
+    : ``;
+
+  return editMode
+    ? `<div class="card-modal modal ${favoriteCard}">
+            <button class="close-button">
+              <span><b>&#215;</b></span>
+            </button>
+            <svg class="favorite-star" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                width="25px" height="25px" viewBox="0 0 612 612" style="enable-background:new 0 0 612 612;" xml:space="preserve">
+              <g>
+              <path d="M387.674,238.179L305.583,0l-84.428,236.26L0,238.179l181.82,150.942L116.475,612l189.108-135.308L494.69,612
+                l-65.372-221.433L612,238.179H387.674z M452.964,556.058L305.583,434.659l-147.38,121.398l55.664-173.475L69.545,265.664
+                l172.139-2.142l63.898-180.401l62.007,182.543h174.864L395.24,382.556L452.964,556.058z"/>
+              </g>
+            </svg>
+            <div class='main__board-card ${favoriteCard}'>
+                <h1 class='card__title'>Title: ${title}</h1>
+                <p class='card__description'>Description: ${body}</p>
+                <p class='card__id'>ID: <span class='id'>${id}</span></p>
+                <p class='card__user-id'>User ID: ${userId}</p>
+            </div>
+          </div>`
+    : false;
 }

@@ -1,3 +1,5 @@
+console.log(`getDataFromServer`)
+
 export const getDataFromServer = (url, method) => {
   return fetch(url, {
     method,

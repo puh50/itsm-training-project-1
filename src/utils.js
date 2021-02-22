@@ -1,4 +1,4 @@
-import {createCard} from './view/card.js';
+console.log(`utils`);
 
 export const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
