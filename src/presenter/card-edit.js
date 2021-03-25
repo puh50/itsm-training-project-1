@@ -1,4 +1,5 @@
 import {cardObject} from "./card-object.js";
+import {activeCardQualifier, notFavoriteCards, favoriteCards, allCards, moveCard} from "./card-presenter.js";
 
 export const cardEdit = (card) => {
   return {
@@ -31,6 +32,7 @@ export const cardEdit = (card) => {
     moveToFromFavorite: function (card) {
       const modal = document.querySelector(`.card-modal`);
       const favoriteStar = modal.querySelector(`.favorite-star`);
+      const currentCard = activeCardQualifier(card)[0];
 
       favoriteStar.addEventListener(`click`, () => {
 
@@ -38,8 +40,18 @@ export const cardEdit = (card) => {
         modal.classList.toggle(`favorite-card`);
 
         card.classList.contains(`favorite-card`)
-          ? (cardObject.moveToFavorite(card), this.favorite = true)
-          : (cardObject.moveFromFavorite(card), this.favorite = false);
+          ? (
+            this.favorite = true,
+            this.moveToFavorite(card),
+            currentCard.favorite = true,
+            moveCard(currentCard, favoriteCards, notFavoriteCards, allCards)
+          )
+          : (
+            this.favorite = false,
+            this.moveFromFavorite(card),
+            currentCard.favorite = false,
+            moveCard(currentCard, favoriteCards, notFavoriteCards, allCards)
+          );
       })
     },
   }

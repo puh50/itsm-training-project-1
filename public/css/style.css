@@ -16,6 +16,11 @@
 	position: relative;
 }
 
+.search {
+	margin: 10px 0 20px 85%;
+	display: block;
+}
+
 .main__flex-section {
 	display: flex;
 	justify-content: space-between;
@@ -23,7 +28,7 @@
 
 .main__board {
 	width: 70vw;
-	height: 85vh;
+	height: 78vh;
 	overflow-y: auto;
 
 	border: 1px solid black;
@@ -93,7 +98,7 @@
 
 .main__card-favorite-block {
 	width: 23vw;
-	height: 87vh;
+	height: 80vh;
 	overflow-y: auto;
 
 	border: 1px solid black;
@@ -125,4 +130,8 @@
 .close-button {
 	background-color: transparent;
 	cursor: pointer;
+}
+
+.serched-text {
+	background-color: gold;
 }
