@@ -2,11 +2,11 @@ console.log(`cardPresenter`)
 
 import {render} from '../utils.js';
 import {renderCard} from '../view/card.js';
-import {extandedCard} from '../view/card-extanded-info.js';
-import {cardObject} from "./card-object.js";
-import {cardEdit} from "./card-edit.js";
+import {extandedCard} from '../view/card-edit.js';
+import {cardObject} from "../entities/card.js";
+import {cardEdit} from "../entities/card-edit.js";
 import {getDataFromServer} from '../data.js';
-import {search} from './search.js';
+import {search} from '../process/search.js';
 
 export const notFavoriteCards = [];
 export const favoriteCards = [];
@@ -17,7 +17,7 @@ const cardFavoriteSection = document.querySelector(`.main__card-favorite-board`)
 const createObjectsFromData = (data) => {
   data.forEach((item) => {
 
-    const newCard = Object.create(cardObject);
+    const newCard = new Object();
 
     newCard.title = item.title;
     newCard.body = item.body;
@@ -25,9 +25,11 @@ const createObjectsFromData = (data) => {
     newCard.userId = item.userId;
     newCard.favorite = false;
 
-    newCard.favorite
-      ? favoriteCards.push(newCard)
-      : notFavoriteCards.push(newCard);
+    if (newCard.favorite) {
+      favoriteCards.push(newCard);
+    } else {
+      notFavoriteCards.push(newCard);
+    }
 
     allCards = [].concat(notFavoriteCards, favoriteCards);
   });
@@ -37,9 +39,11 @@ export const renderCards = (cards) => {
   const mainBoard = document.querySelector(`.main__board`);
   const cardFavoriteBlock = cardFavoriteSection.querySelector(`.main__card-favorite-block`);
   cards.forEach((item) => {
-    item.favorite
-      ? render(cardFavoriteBlock, renderCard(item), `beforeend`)
-      : render(mainBoard, renderCard(item), `beforeend`);
+    if (item.favorite) {
+      render(cardFavoriteBlock, renderCard(item), `beforeend`);
+    } else {
+      render(mainBoard, renderCard(item), `beforeend`);
+    }
   })
 };
 
@@ -54,7 +58,7 @@ export const activeCardQualifier = (card) => {
 export const moveCard = (currentCard, toArray, fromArray, mainArray) => {
   toArray.push(currentCard);
   fromArray.splice(defineCardIndex(fromArray, currentCard), 1);
-  mainArray = [].concat(fromArray, toArray);
+  return mainArray = [].concat(fromArray, toArray);
 }
 
 const defineCardIndex = (array, currentCard) => {
@@ -69,31 +73,33 @@ export const cardEventsHandler = () => {
       evt.stopPropagation();
 
       const currentCard = activeCardQualifier(card)[0];
+      let isCardFavorite = card.classList.contains(`favorite-card`);
 
       if (evt.target.classList.contains(`favorite-star`)) {
         const modal = document.querySelector(`.card-modal`);
 
         card.classList.toggle(`favorite-card`);
+        isCardFavorite = card.classList.contains(`favorite-card`);
 
         if (modal) {
-          const modalCardId = Number(modal.querySelector(`.id`).innerText);
 
-          currentCard.id === modalCardId
-            ? modal.classList.toggle(`favorite-card`)
-            : false;
+          const modalCardId = Number(modal.querySelector(`.id`).innerText);
+          if (currentCard.id === modalCardId) {
+            modal.classList.toggle(`favorite-card`);
+          }
+
         }
 
-        card.classList.contains(`favorite-card`)
-          ? (
-            cardObject.moveToFavorite(card),
-            currentCard.favorite = true,
-            moveCard(currentCard, favoriteCards, notFavoriteCards, allCards)
-          )
-          : (
-            cardObject.moveFromFavorite(card),
-            currentCard.favorite = false,
-            moveCard(currentCard, notFavoriteCards, favoriteCards, allCards)
-          );
+        currentCard.favorite = isCardFavorite;
+
+        if (isCardFavorite) {
+          cardObject.moveToFavorite(card);
+          allCards = moveCard(currentCard, favoriteCards, notFavoriteCards, allCards);
+        } else {
+          cardObject.moveFromFavorite(card);
+          allCards = moveCard(currentCard, notFavoriteCards, favoriteCards, allCards);
+        }
+
       }
 
       if (evt.target.classList.contains(`magnifier`)) {
@@ -103,20 +109,16 @@ export const cardEventsHandler = () => {
 
         currentCard.editMode = true;
 
-        modal
-          ? modal.remove()
-          : false;
+        if (modal) {
+          modal.remove();
+        }
 
-        const modalCard = Object.create(cardEdit(currentCard));
+        cardEdit.favorite = isCardFavorite;
 
-        currentCard.favorite === true && card.classList.contains(`favorite-card`)
-          ? modalCard.favorite = true
-          : modalCard.favorite = false;
-
-        render(mainBlock, extandedCard(modalCard), `beforeend`);
-        modalCard.closeEditMode();
-        modalCard.closeEditModeByDocumentClick();
-        modalCard.moveToFromFavorite(card);
+        render(mainBlock, extandedCard(currentCard), `beforeend`);
+        cardEdit.closeEditMode(card);
+        cardEdit.closeEditModeByDocumentClick(card);
+        cardEdit.moveToFromFavorite(card);
 
       }
 
@@ -131,18 +133,17 @@ export const textHighlight = (text) => {
   cardElements.forEach((card) => {
     const cardChildren = card.children;
 
-    for (let child of cardChildren) {
+    for (const child of cardChildren) {
       if (child.classList.contains(`card__title`)) {
 
-        let currentTitle = child.innerHTML;
+        const currentTitle = child.innerHTML;
         let newTitle;
 
-        text.indexOf(currentTitle)
-          ? (
-            newTitle = currentTitle.replace(new RegExp(text, `g`), `<span class="serched-text">` + text + `</span>`),
-            child.innerHTML = newTitle
-          )
-          : false;
+        if (text.indexOf(currentTitle)) {
+          newTitle = currentTitle.replace(new RegExp(text, `g`), `<span class="serched-text">` + text + `</span>`);
+          child.innerHTML = newTitle;
+        }
+
       }
     }
   })

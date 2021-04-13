@@ -1,6 +1,6 @@
 console.log(`getDataFromServer`)
 
-export const getDataFromServer = (url, method) => {
+export const getDataFromServer = (url, method = `GET`) => {
   return fetch(url, {
     method,
   })
