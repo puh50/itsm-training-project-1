@@ -1,8 +1,8 @@
 console.log(`getDataFromServer`)
 
-export const getDataFromServer = (url, method = `GET`) => {
+export const getDataFromServer = (url) => {
   return fetch(url, {
-    method,
+    method: `GET`,
   })
     .then((resolve) => resolve.json())
     .catch((err) => alert(`The following error is occured: ${err}`));

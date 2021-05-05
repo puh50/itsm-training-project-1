@@ -1,5 +1,6 @@
 import {activeCardQualifier, notFavoriteCards, favoriteCards, allCards, moveCard} from "../presenter/card-presenter.js";
 import {cardObject} from "./card.js";
+import {remove} from '../utils.js';
 
 export const cardEdit = Object.create(cardObject);
 
@@ -45,12 +46,11 @@ cardEdit.moveToFromFavorite = function (card) {
     const isCardFavorite = card.classList.contains(`favorite-card`);
     currentCard.favorite = isCardFavorite;
     this.favorite = isCardFavorite;
+    remove(card);
 
     if (isCardFavorite) {
-      this.moveToFavorite(card);
       moveCard(currentCard, favoriteCards, notFavoriteCards, allCards);
     } else {
-      this.moveFromFavorite(card);
       moveCard(currentCard, notFavoriteCards, favoriteCards, allCards);
     }
 

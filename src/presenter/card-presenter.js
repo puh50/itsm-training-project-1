@@ -1,9 +1,8 @@
 console.log(`cardPresenter`)
 
-import {render} from '../utils.js';
+import {remove, render} from '../utils.js';
 import {renderCard} from '../view/card.js';
 import {extandedCard} from '../view/card-edit.js';
-import {cardObject} from "../entities/card.js";
 import {cardEdit} from "../entities/card-edit.js";
 import {getDataFromServer} from '../data.js';
 import {search} from '../process/search.js';
@@ -12,12 +11,10 @@ export const notFavoriteCards = [];
 export const favoriteCards = [];
 export let allCards = [];
 
-const cardFavoriteSection = document.querySelector(`.main__card-favorite-board`);
-
 const createObjectsFromData = (data) => {
   data.forEach((item) => {
 
-    const newCard = new Object();
+    const newCard = new Object();  // can be just "{}"
 
     newCard.title = item.title;
     newCard.body = item.body;
@@ -37,13 +34,9 @@ const createObjectsFromData = (data) => {
 
 export const renderCards = (cards) => {
   const mainBoard = document.querySelector(`.main__board`);
-  const cardFavoriteBlock = cardFavoriteSection.querySelector(`.main__card-favorite-block`);
+
   cards.forEach((item) => {
-    if (item.favorite) {
-      render(cardFavoriteBlock, renderCard(item), `beforeend`);
-    } else {
-      render(mainBoard, renderCard(item), `beforeend`);
-    }
+    render(mainBoard, renderCard(item), `beforeend`);
   })
 };
 
@@ -58,7 +51,8 @@ export const activeCardQualifier = (card) => {
 export const moveCard = (currentCard, toArray, fromArray, mainArray) => {
   toArray.push(currentCard);
   fromArray.splice(defineCardIndex(fromArray, currentCard), 1);
-  return mainArray = [].concat(fromArray, toArray);
+  // mainArray.push([].concat(fromArray, toArray));
+  mainArray = [].concat(fromArray, toArray);
 }
 
 const defineCardIndex = (array, currentCard) => {
@@ -91,13 +85,12 @@ export const cardEventsHandler = () => {
         }
 
         currentCard.favorite = isCardFavorite;
+        remove(card);
 
         if (isCardFavorite) {
-          cardObject.moveToFavorite(card);
-          allCards = moveCard(currentCard, favoriteCards, notFavoriteCards, allCards);
+          moveCard(currentCard, favoriteCards, notFavoriteCards, allCards);
         } else {
-          cardObject.moveFromFavorite(card);
-          allCards = moveCard(currentCard, notFavoriteCards, favoriteCards, allCards);
+          moveCard(currentCard, notFavoriteCards, favoriteCards, allCards);
         }
 
       }
@@ -150,7 +143,7 @@ export const textHighlight = (text) => {
 }
 
 export async function workingWithData() {
-  const data = await getDataFromServer(`https://jsonplaceholder.typicode.com/posts`, `GET`);
+  const data = await getDataFromServer(`https://jsonplaceholder.typicode.com/posts`);
 
   createObjectsFromData(data);
   renderCards(allCards);

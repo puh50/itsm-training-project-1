@@ -27,18 +27,31 @@
 }
 
 .main__board {
-	width: 70vw;
-	height: 78vh;
+	width: 93vw;
+	height: 76vh;
 	overflow-y: auto;
 
 	border: 1px solid black;
 	padding: 20px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: flex-start;
+}
+
+.button {
+	border-radius: 3px;
+	margin-bottom: 10px;
+
+	cursor: pointer;
+}
+
+.active {
+	background-color: black;
+	color: #fff;
+	border: 3px solid black;
 }
 
 .card {

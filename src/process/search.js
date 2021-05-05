@@ -1,5 +1,5 @@
 import {clear} from '../utils.js';
-import {allCards, renderCards, cardEventsHandler, textHighlight} from '../presenter/card-presenter.js';
+import {allCards, notFavoriteCards, favoriteCards, renderCards, cardEventsHandler, textHighlight} from '../presenter/card-presenter.js';
 
 export const search = {
   element: document.querySelector(`.search`),
@@ -9,24 +9,43 @@ export const search = {
     this.element.addEventListener(`input`, () => {
       const searchText = this.element.value;
 
-      const searchedCards = allCards.filter((card) => {
+      const searchedNotFavoriteCards = notFavoriteCards.filter((card) => {
+        return card.title.includes(searchText);
+      });
+
+      const searchedFavoriteCards = favoriteCards.filter((card) => {
         return card.title.includes(searchText);
       });
 
       const mainBoard = document.querySelector(`.main__board`);
-      const cardFavoriteSection = document.querySelector(`.main__card-favorite-board`);
-      const cardFavoriteBlock = cardFavoriteSection.querySelector(`.main__card-favorite-block`);
-
-      clear(mainBoard);
-      clear(cardFavoriteBlock);
+      const favoriteButton = document.querySelector(`.button-favorite`);
 
       if (searchText.length >= 3) {
-        renderCards(searchedCards);
+
+        clear(mainBoard);
+
+        if (favoriteButton.classList.contains(`active`)) {
+          renderCards(searchedFavoriteCards);
+        } else {
+          renderCards(searchedNotFavoriteCards);
+        }
         textHighlight(searchText);
-      } else {
-        renderCards(allCards);
+        cardEventsHandler();
+
       }
-      cardEventsHandler();
+
+      if (searchText.length < 3) {
+
+        clear(mainBoard);
+
+        if (favoriteButton.classList.contains(`active`)) {
+          renderCards(favoriteCards);
+        } else {
+          renderCards(notFavoriteCards);
+        }
+        cardEventsHandler();
+
+      }
 
     })
   }

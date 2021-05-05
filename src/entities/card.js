@@ -21,18 +21,4 @@ export const cardObject = {
     })
   },
 
-  moveToFavorite: function (card) {
-    const cardFavoriteSection = document.querySelector(`.main__card-favorite-board`);
-    const cardFavoriteBlock = cardFavoriteSection.querySelector(`.main__card-favorite-block`);
-
-    cardFavoriteBlock.appendChild(card);
-  },
-
-  moveFromFavorite: function (card) {
-    const mainBoard = document.querySelector(`.main__board`);
-
-    mainBoard.appendChild(card);
-  },
-
-
 }
