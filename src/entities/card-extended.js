@@ -1,39 +1,41 @@
-import {activeCardQualifier, notFavoriteCards, favoriteCards, allCards, moveCard} from "../presenter/card-presenter.js";
+import {activeCardQualifier, notFavoriteCards, favoriteCards, allCards, moveCard, moveCustomFavoriteCard, moveCustomNotFavoriteCard} from "../presenter/card-presenter.js";
 import {cardObject} from "./card.js";
 import {remove} from '../utils.js';
 
-export const cardEdit = Object.create(cardObject);
+export const cardExtended = Object.create(cardObject);
 
-const closeEditModeActions = (object, card, element) => {
-  object.editMode = false;
-  card.editMode = false;
-  element.remove();
+const closeExtendedModeActions = (object, card) => {
+  object.extendedMode = false;
+  card.extendedMode = false;
 }
 
-cardEdit.closeEditMode = function (card) {
-  const modal = document.querySelector(`.card-modal`);
+cardExtended.closeExtendedMode = function (card) {
+  const modal = document.querySelector(`.modal`);
   const closeButton = modal.querySelector(`.close-button`);
   const currentCard = activeCardQualifier(card)[0];
 
   closeButton.addEventListener(`click`, () => {
-    closeEditModeActions(this, currentCard, modal);
+    closeExtendedModeActions(this, currentCard);
+    remove(modal);
   })
 
 };
 
-cardEdit.closeEditModeByDocumentClick = function (card) {
+cardExtended.closeExtendedModeByDocumentClick = function (card) {
+
   document.addEventListener('click', function (evt) {
     const modal = document.querySelector('.modal');
     const currentCard = activeCardQualifier(card)[0];
 
     if (modal && !modal.contains(evt.target)) {
-      closeEditModeActions(this, currentCard, modal);
+      closeExtendedModeActions(this, currentCard);
+      remove(modal);
     }
 
   }, true);
 };
 
-cardEdit.moveToFromFavorite = function (card) {
+cardExtended.moveToFromFavorite = function (card) {
   const modal = document.querySelector(`.card-modal`);
   const favoriteStar = modal.querySelector(`.favorite-star`);
   const currentCard = activeCardQualifier(card)[0];
@@ -44,13 +46,20 @@ cardEdit.moveToFromFavorite = function (card) {
     modal.classList.toggle(`favorite-card`);
 
     const isCardFavorite = card.classList.contains(`favorite-card`);
+    const isCardCustom = card.classList.contains(`card-custom`);
     currentCard.favorite = isCardFavorite;
     this.favorite = isCardFavorite;
     remove(card);
 
-    if (isCardFavorite) {
+    if (isCardCustom && isCardFavorite) {
+      moveCustomFavoriteCard(card);
+    } else if (!isCardCustom && isCardFavorite) {
       moveCard(currentCard, favoriteCards, notFavoriteCards, allCards);
-    } else {
+    }
+
+    if (isCardCustom && !isCardFavorite) {
+      moveCustomNotFavoriteCard(card);
+    } else if (!isCardCustom && !isCardFavorite) {
       moveCard(currentCard, notFavoriteCards, favoriteCards, allCards);
     }
 

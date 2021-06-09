@@ -1,4 +1,6 @@
 import {render} from "../utils";
+import {extandedCard} from '../view/card-extended.js';
+import {cardExtended} from '../entities/card-extended.js';
 
 export const cardObject = {
   title: ``,
@@ -6,19 +8,19 @@ export const cardObject = {
   id: ``,
   userId: ``,
   favorite: false,
-  editMode: false,
+  extendedMode: false,
 
-  openEditMode: function () {
-    this.editMode = true;
+  openExtendedMode: function (card) {
+    this.extendedMode = true;
 
-    const magnifierButton = this.querySelector(`.magnifier`);
+    // const magnifierButton = this.querySelector(`.magnifier`);
 
-    magnifierButton.addEventListener(`click`, () => {
+    // magnifierButton.addEventListener(`click`, () => {
 
-      const mainBlock = document.querySelector(`.main`);
-      const modalCard = Object.create(cardEdit(this));
-      render(mainBlock, extandedCard(modalCard), `beforeend`);
-    })
+    const mainBlock = document.querySelector(`.main`);
+    const modalCard = Object.create(cardExtended);
+    render(mainBlock, extandedCard(modalCard), `beforeend`);
+    // })
   },
 
 }

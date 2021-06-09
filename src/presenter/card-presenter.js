@@ -1,11 +1,14 @@
 console.log(`cardPresenter`)
 
-import {remove, render} from '../utils.js';
+import {remove, render, closeModalByCrossClick, closeModalByDocumentClick} from '../utils.js';
 import {renderCard} from '../view/card.js';
-import {extandedCard} from '../view/card-edit.js';
-import {cardEdit} from "../entities/card-edit.js";
+import {cardCustom} from '../view/card-custom.js';
+import {extandedCard} from '../view/card-extended.js';
+import {cardExtended} from "../entities/card-extended.js";
 import {getDataFromServer} from '../data.js';
 import {search} from '../process/search.js';
+import {cardObject} from '../entities/card.js';
+import {customNotFavoriteCards, customFavoriteCards} from '../process/create-card.js';
 
 export const notFavoriteCards = [];
 export const favoriteCards = [];
@@ -21,6 +24,7 @@ const createObjectsFromData = (data) => {
     newCard.id = item.id;
     newCard.userId = item.userId;
     newCard.favorite = false;
+    newCard.custom = false;
 
     if (newCard.favorite) {
       favoriteCards.push(newCard);
@@ -28,7 +32,7 @@ const createObjectsFromData = (data) => {
       notFavoriteCards.push(newCard);
     }
 
-    allCards = [].concat(notFavoriteCards, favoriteCards);
+    allCards = [].concat(customNotFavoriteCards, customFavoriteCards, notFavoriteCards, favoriteCards);
   });
 };
 
@@ -36,13 +40,18 @@ export const renderCards = (cards) => {
   const mainBoard = document.querySelector(`.main__board`);
 
   cards.forEach((item) => {
-    render(mainBoard, renderCard(item), `beforeend`);
+    if (item.custom) {
+      render(mainBoard, cardCustom(item), `beforeend`);
+    } else {
+      render(mainBoard, renderCard(item), `beforeend`);
+    }
   })
+
 };
 
 export const activeCardQualifier = (card) => {
   const activeCards = allCards.filter((item) => {
-    return item.id === Number(card.dataset.id);
+    return Number(item.id) === Number(card.dataset.id);
   })
 
   return activeCards;
@@ -55,11 +64,52 @@ export const moveCard = (currentCard, toArray, fromArray, mainArray) => {
   mainArray = [].concat(fromArray, toArray);
 }
 
+export const moveCustomFavoriteCard = (card) => {
+  const currentCard = activeCardQualifier(card)[0];
+  const keys = Object.keys(localStorage);
+
+  for (let key of keys) {
+    const reg = /card_[0-9]*/g;
+    let cardMatched = key.match(reg);
+
+    if (cardMatched) {
+      const cardParsed = JSON.parse(localStorage.getItem(cardMatched));
+      if (currentCard.id === cardParsed.id) {
+        cardParsed.favorite = true;
+        moveCard(currentCard, customFavoriteCards, customNotFavoriteCards, allCards);
+        localStorage.setItem(cardMatched, JSON.stringify(cardParsed));
+      }
+
+    }
+  }
+}
+
+export const moveCustomNotFavoriteCard = (card) => {
+  const currentCard = activeCardQualifier(card)[0];
+  const keys = Object.keys(localStorage);
+
+  for (let key of keys) {
+    const reg = /card_[0-9]*/g;
+    let cardMatched = key.match(reg);
+
+    if (cardMatched) {
+      const cardParsed = JSON.parse(localStorage.getItem(cardMatched));
+      if (currentCard.id === cardParsed.id) {
+        cardParsed.favorite = false;
+        moveCard(currentCard, customNotFavoriteCards, customFavoriteCards, allCards);
+        localStorage.setItem(cardMatched, JSON.stringify(cardParsed));
+      }
+
+    }
+  }
+}
+
 const defineCardIndex = (array, currentCard) => {
   return array.findIndex(card => card == currentCard);
 }
 
 export const cardEventsHandler = () => {
+  allCards = [].concat(customNotFavoriteCards, customFavoriteCards, notFavoriteCards, favoriteCards);
   const cardElements = document.querySelectorAll(`.card`);
 
   cardElements.forEach((card) => {
@@ -68,6 +118,7 @@ export const cardEventsHandler = () => {
 
       const currentCard = activeCardQualifier(card)[0];
       let isCardFavorite = card.classList.contains(`favorite-card`);
+      const isCardCustom = card.classList.contains(`card-custom`);
 
       if (evt.target.classList.contains(`favorite-star`)) {
         const modal = document.querySelector(`.card-modal`);
@@ -76,44 +127,73 @@ export const cardEventsHandler = () => {
         isCardFavorite = card.classList.contains(`favorite-card`);
 
         if (modal) {
-
           const modalCardId = Number(modal.querySelector(`.id`).innerText);
           if (currentCard.id === modalCardId) {
             modal.classList.toggle(`favorite-card`);
           }
-
-        }
+        };
 
         currentCard.favorite = isCardFavorite;
         remove(card);
 
-        if (isCardFavorite) {
+        if (isCardCustom && isCardFavorite) {
+          moveCustomFavoriteCard(card);
+        } else if (!isCardCustom && isCardFavorite) {
           moveCard(currentCard, favoriteCards, notFavoriteCards, allCards);
-        } else {
-          moveCard(currentCard, notFavoriteCards, favoriteCards, allCards);
-        }
+        };
 
-      }
+        if (isCardCustom && !isCardFavorite) {
+          moveCustomNotFavoriteCard(card);
+        } else if (!isCardCustom && !isCardFavorite) {
+          moveCard(currentCard, notFavoriteCards, favoriteCards, allCards);
+        };
+
+      };
 
       if (evt.target.classList.contains(`magnifier`)) {
 
         const mainBlock = document.querySelector(`.main`);
         const modal = document.querySelector(`.card-modal`);
 
-        currentCard.editMode = true;
+        currentCard.extendedMode = true;
+        cardExtended.favorite = isCardFavorite;
 
         if (modal) {
-          modal.remove();
+          remove(modal);
         }
 
-        cardEdit.favorite = isCardFavorite;
-
         render(mainBlock, extandedCard(currentCard), `beforeend`);
-        cardEdit.closeEditMode(card);
-        cardEdit.closeEditModeByDocumentClick(card);
-        cardEdit.moveToFromFavorite(card);
+        cardExtended.closeExtendedMode(card);
+        cardExtended.closeExtendedModeByDocumentClick(card);
+        cardExtended.moveToFromFavorite(card);
 
       }
+
+      if (evt.target.classList.contains(`recycle-bin`)) {
+        remove(evt.target.parentElement);
+
+        const keys = Object.keys(localStorage);
+        for (let key of keys) {
+          const reg = /card_[0-9]*/g;
+          let cardMatched = key.match(reg);
+
+          if (cardMatched) {
+            const cardParsed = JSON.parse(localStorage.getItem(cardMatched));
+            if (currentCard.id === cardParsed.id) {
+              localStorage.removeItem(cardMatched);
+
+              if (currentCard.favorite) {
+                customFavoriteCards.splice(defineCardIndex(customFavoriteCards, currentCard), 1);
+              } else {
+                customNotFavoriteCards.splice(defineCardIndex(customNotFavoriteCards, currentCard), 1);
+              };
+
+            };
+
+          };
+        };
+
+      };
 
     });
 
@@ -146,7 +226,8 @@ export async function workingWithData() {
   const data = await getDataFromServer(`https://jsonplaceholder.typicode.com/posts`);
 
   createObjectsFromData(data);
-  renderCards(allCards);
+  renderCards(customNotFavoriteCards);
+  renderCards(notFavoriteCards);
   cardEventsHandler();
   search.typeTextHandler();
 };

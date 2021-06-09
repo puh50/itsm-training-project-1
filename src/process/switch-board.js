@@ -2,6 +2,7 @@ console.log(`switch-board`);
 
 import {clear} from '../utils.js';
 import {cardEventsHandler, notFavoriteCards, favoriteCards, renderCards} from '../presenter/card-presenter.js';
+import {customNotFavoriteCards, customFavoriteCards} from '../process/create-card.js';
 
 export const switchBoardHandler = () => {
 
@@ -13,13 +14,25 @@ export const switchBoardHandler = () => {
 
     if (evt.target.classList.contains(`button-board-change`)) {
 
-      homeButton.classList.toggle(`active`);
-      favoriteButton.classList.toggle(`active`);
+      switch (evt.target) {
+        case homeButton:
+          favoriteButton.classList.remove(`active`);
+          homeButton.classList.add(`active`);
+          break;
+
+        case favoriteButton:
+          homeButton.classList.remove(`active`);
+          favoriteButton.classList.add(`active`);
+          break;
+      }
+
       clear(board);
 
       if (evt.target === favoriteButton) {
+        renderCards(customFavoriteCards);
         renderCards(favoriteCards);
       } else if (evt.target === homeButton) {
+        renderCards(customNotFavoriteCards);
         renderCards(notFavoriteCards);
       }
 

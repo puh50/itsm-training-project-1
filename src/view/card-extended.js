@@ -1,14 +1,14 @@
 console.log(`extandedCard`)
 
 export const extandedCard = (card) => {
-  const {title, body, favorite, id, userId, editMode} = card;
+    const {title, body, favorite, id, userId, extendedMode} = card;
 
-  const favoriteCard = favorite
-    ? `favorite-card`
-    : ``;
+    const favoriteCard = favorite
+        ? `favorite-card`
+        : ``;
 
-  return editMode
-    ? `<div class="card-modal modal ${favoriteCard}">
+    return extendedMode
+        ? `<div class="card-modal modal ${favoriteCard}">
             <button class="close-button">
               <span><b>&#215;</b></span>
             </button>
@@ -27,5 +27,5 @@ export const extandedCard = (card) => {
                 <p class='card__user-id'>User ID: ${userId}</p>
             </div>
           </div>`
-    : false;
+        : false;
 }

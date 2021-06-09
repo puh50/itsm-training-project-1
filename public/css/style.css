@@ -28,7 +28,7 @@
 
 .main__board {
 	width: 93vw;
-	height: 76vh;
+	height: 70vh;
 	overflow-y: auto;
 
 	border: 1px solid black;
@@ -88,15 +88,43 @@
 }
 
 .magnifier {
+	width: 22px;
+	height: 22px;
+
+	background: transparent;
+	background-image: url("../images/magnifier.svg");
+	border: none;
+
 	position: absolute;
 	left: 10px;
 }
 
 .magnifier:hover {
-	width: 24px;
-	height: 24px;
+	background-image: url("../images/magnifier-blue.svg");
 
-	fill: blue;
+	cursor: pointer;
+}
+
+.recycle-bin {
+	width: 22px;
+	height: 22px;
+
+	background: transparent;
+	background-image: url("../images/remove-garbage-icon.svg");
+	border: none;
+
+	position: absolute;
+	left: 40px;
+}
+
+.recycle-bin:hover {
+	background-image: url("../images/remove-garbage-icon-blue.svg");
+
+	cursor: pointer;
+}
+
+.recycle-bin:hover .st0 {
+	stroke: blue;
 }
 
 .main__card-full-section {
@@ -118,10 +146,14 @@
 	padding: 10px;
 }
 
-/* card-modal */
+/* card-modal-edit */
+
+:root {
+	--modalWidth: 500px;
+}
 
 .modal {
-	width: 500px;
+	width: var(--modalWidth);
 	min-height: 300px;
 
 	padding: 20px;
@@ -147,4 +179,51 @@
 
 .serched-text {
 	background-color: gold;
+}
+
+/* card-modal-new */
+
+.add-card-button {
+	cursor: pointer;
+}
+
+.add-card-form {
+	padding: 15px;
+	background-color: darkgrey;
+	border: 1px solid black;
+
+	display: block;
+
+	position: absolute;
+	top: 5%;
+	left: calc(50% - var(--modalWidth) / 2);
+}
+
+.add-card-form label {
+	display: block;
+}
+
+#add-card-form__title {
+	width: 100%;
+	box-sizing: border-box;
+
+	margin-top: 5px;
+	margin-bottom: 20px;
+}
+
+#add-card-form__description {
+	width: 100%;
+	box-sizing: border-box;
+
+	margin-top: 5px;
+	margin-bottom: 20px;
+}
+
+.add-card-form__buttons {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.card-custom {
+	background-color: lightgray;
 }
