@@ -65,12 +65,15 @@
 	margin: 10px;
 
 	position: relative;
-
-	cursor: pointer;
 }
 
 .card__title {
 	margin-top: 40px;
+}
+
+.card__title-label,
+.card__description-label {
+	cursor: pointer;
 }
 
 .favorite-star {

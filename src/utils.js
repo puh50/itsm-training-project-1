@@ -42,3 +42,33 @@ export const favoriteToggle = (element) => {
   };
 
 };
+
+export const getLocalCards = () => {
+  const keys = Object.keys(localStorage);
+
+  const localCards = {
+    cardKeys: [],
+    cardValues: [],
+  };
+
+  for (const key of keys) {
+    const reg = /card_[0-9]*/g;
+    const cardMatched = key.match(reg);
+
+    if (cardMatched) {
+      const cardParsed = JSON.parse(localStorage.getItem(cardMatched));
+
+      localCards.cardKeys.push(cardMatched[0]);
+      localCards.cardValues.push(cardParsed);
+    };
+
+  };
+
+  return localCards;
+};
+
+export const getLocalCardById = (localCards, currentCard) => {
+  return localCards.cardValues.filter((item) => {
+    return currentCard.id === item.id;
+  });
+}

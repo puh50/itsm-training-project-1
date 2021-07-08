@@ -14,7 +14,6 @@ render(cardInfoBoardsSection, createMainBoard(), `beforeend`);
 workingWithData();
 switchBoardHandler();
 
-
 // Localstorage part
 fillCardArraysWithLocalCards();
 newCardCreation();

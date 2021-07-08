@@ -1,6 +1,7 @@
 import {activeCardQualifier, notFavoriteCards, favoriteCards, allCards, moveCard, moveCustomFavoriteCard, moveCustomNotFavoriteCard} from "../presenter/card-presenter.js";
 import {cardObject} from "./card.js";
 import {remove} from '../utils.js';
+import {renderActiveBoardCards} from '../process/switch-board.js';
 
 export const cardExtended = Object.create(cardObject);
 
@@ -49,7 +50,6 @@ cardExtended.moveToFromFavorite = function (card) {
     const isCardCustom = card.classList.contains(`card-custom`);
     currentCard.favorite = isCardFavorite;
     this.favorite = isCardFavorite;
-    remove(card);
 
     if (isCardCustom && isCardFavorite) {
       moveCustomFavoriteCard(card);
@@ -63,5 +63,6 @@ cardExtended.moveToFromFavorite = function (card) {
       moveCard(currentCard, notFavoriteCards, favoriteCards, allCards);
     }
 
+    renderActiveBoardCards(`afterbegin`);
   })
 }

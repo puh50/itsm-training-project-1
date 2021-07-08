@@ -8,7 +8,6 @@ export const switchBoardHandler = () => {
 
   const favoriteButton = document.querySelector(`.button-favorite`);
   const homeButton = document.querySelector(`.button-home`);
-  const board = document.querySelector(`.main__board`);
 
   document.addEventListener(`click`, (evt) => {
 
@@ -26,18 +25,27 @@ export const switchBoardHandler = () => {
           break;
       }
 
-      clear(board);
+      renderActiveBoardCards();
 
-      if (evt.target === favoriteButton) {
-        renderCards(customFavoriteCards);
-        renderCards(favoriteCards);
-      } else if (evt.target === homeButton) {
-        renderCards(customNotFavoriteCards);
-        renderCards(notFavoriteCards);
-      }
-
-      cardEventsHandler();
     }
 
   })
-}
+};
+
+export const renderActiveBoardCards = (where = `afterbegin`) => {
+  const favoriteButton = document.querySelector(`.button-favorite`);
+  const homeButton = document.querySelector(`.button-home`);
+  const board = document.querySelector(`.main__board`);
+
+  clear(board);
+
+  if (favoriteButton.classList.contains(`active`)) {
+    renderCards(favoriteCards, where);
+    renderCards(customFavoriteCards, where);
+  } else if (homeButton.classList.contains(`active`)) {
+    renderCards(notFavoriteCards, where);
+    renderCards(customNotFavoriteCards, where);
+  }
+
+  cardEventsHandler();
+};

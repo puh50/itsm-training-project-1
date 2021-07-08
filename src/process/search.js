@@ -1,5 +1,5 @@
 import {clear} from '../utils.js';
-import {allCards, notFavoriteCards, favoriteCards, renderCards, cardEventsHandler, textHighlight} from '../presenter/card-presenter.js';
+import {notFavoriteCards, favoriteCards, renderCards, cardEventsHandler, textHighlight} from '../presenter/card-presenter.js';
 import {customNotFavoriteCards, customFavoriteCards} from '../process/create-card.js';
 
 export const search = {
@@ -34,11 +34,13 @@ export const search = {
         clear(mainBoard);
 
         if (favoriteButton.classList.contains(`active`)) {
-          renderCards(searchedcustomFavoriteCards);
           renderCards(searchedFavoriteCards);
+          renderCards(searchedcustomFavoriteCards);
+
         } else {
-          renderCards(searchedcustomNotFavoriteCards);
           renderCards(searchedNotFavoriteCards);
+          renderCards(searchedcustomNotFavoriteCards);
+
         }
         textHighlight(searchText);
         cardEventsHandler();
@@ -50,11 +52,13 @@ export const search = {
         clear(mainBoard);
 
         if (favoriteButton.classList.contains(`active`)) {
-          renderCards(customFavoriteCards);
           renderCards(favoriteCards);
+          renderCards(customFavoriteCards);
+
         } else {
-          renderCards(customNotFavoriteCards);
           renderCards(notFavoriteCards);
+          renderCards(customNotFavoriteCards);
+
         }
         cardEventsHandler();
 

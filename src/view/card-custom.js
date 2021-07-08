@@ -5,8 +5,6 @@ export const cardCustom = (card) => {
     ? `favorite-card`
     : ``;
 
-  const cardNumber = localStorage.key;
-
   return `<div class='main__board-card card card-custom ${favoriteCard}' data-id=${id}>
             <button class="magnifier" title="Open card"></button>
             <button class="recycle-bin" title="Remove card"></button>
@@ -18,9 +16,15 @@ export const cardCustom = (card) => {
                 l172.139-2.142l63.898-180.401l62.007,182.543h174.864L395.24,382.556L452.964,556.058z"/>
               </g>
             </svg>
-              <h1 class='card__title'>Title: ${title}</h1>
-              <p class='card__description'>Description: ${body}</p>
-              <p class='card__id'>ID: ${id}</p>
+              <h1 class='card__title'>
+                <label class='card__title-label' for=".card__title-text">Title:</label>
+                <span class='card__title-text'>${title}</span>
+               </h1>
+              <p class='card__description'>
+                <label class='card__description-label' for=".card__description-text">Description:</label>
+                <span class='card__description-text'>${body}</span>
+              </p>
+              <p class='card__id visually-hidden'>ID: ${id}</p>
               <p class='card__user-id visually-hidden'>User ID: ${userId}</p>
           </div>`;
 };

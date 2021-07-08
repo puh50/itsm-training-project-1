@@ -1,18 +1,10 @@
-import {notFavoriteCards, favoriteCards, cardEventsHandler} from '../presenter/card-presenter.js';
-import {render, remove, closeModalByCrossClick, closeModalByDocumentClick, favoriteToggle} from '../utils.js';
+import {cardEventsHandler} from '../presenter/card-presenter.js';
+import {render, remove, closeModalByCrossClick, closeModalByDocumentClick, favoriteToggle, getLocalCards} from '../utils.js';
 import {cardCustom} from '../view/card-custom.js';
 import {cardNewPopup} from '../view/card-new-popup.js';
 
 export const customNotFavoriteCards = [];
 export const customFavoriteCards = [];
-
-if (!localStorage.customCardCounter) {
-  localStorage.customCardCounter = 1;
-} else {
-  localStorage.customCardCounter = localStorage.customCardCounter;
-}
-
-// localStorage.clear();
 
 export const newCardCreation = () => {
   const mainBlock = document.querySelector(`.main__board`);
@@ -45,7 +37,7 @@ const createCardHandler = function () {
 
       const cardTitle = document.querySelector(`#add-card-form__title`).value;
       const cardDescription = document.querySelector(`#add-card-form__description`).value;
-      const newCardId = 1000 + Number(localStorage.customCardCounter);
+      const newCardId = Date.now();
       const cardId = newCardId;
       const cardUserId = document.querySelector(`.add-card-form__user-id`).dataset.userId;
       const isCardFavorite = addCardForm.classList.contains(`favorite-card`);
@@ -61,9 +53,8 @@ const createCardHandler = function () {
       }
 
       // Populate localstorage with new card
-      const card = `card_${localStorage.getItem(`customCardCounter`)}`;
+      const card = `card_${cardId}`;
       localStorage[card] = JSON.stringify(newCustomCard);
-      localStorage.customCardCounter++;
 
       if (newCustomCard.favorite) {
         customFavoriteCards.push(newCustomCard);
@@ -78,20 +69,18 @@ const createCardHandler = function () {
 };
 
 export const fillCardArraysWithLocalCards = () => {
-  const keys = Object.keys(localStorage);
-  for (let key of keys) {
-    const reg = /card_[0-9]*/g;
-    let cardMatched = key.match(reg);
 
-    if (cardMatched) {
-      const cardParsed = JSON.parse(localStorage.getItem(cardMatched));
+  const localCards = getLocalCards();
 
-      if (cardParsed.favorite) {
-        customFavoriteCards.push(cardParsed);
-      } else {
-        customNotFavoriteCards.push(cardParsed);
-      }
-    };
-  };
+  localCards.cardValues.forEach((item) => {
+    if (item.favorite) {
+      customFavoriteCards.push(item);
+    } else {
+      customNotFavoriteCards.push(item);
+    }
+  })
+
 };
+
+
 
